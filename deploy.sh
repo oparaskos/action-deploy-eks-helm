@@ -18,7 +18,7 @@ fi
 
 
 # Check if namespace exists and create it if it doesn't.
-KUBE_NAMESPACE_EXISTS=$(kubectl get namespaces | _grep ${DEPLOY_NAMESPACE})
+KUBE_NAMESPACE_EXISTS=$(kubectl get namespaces | _grep ^${DEPLOY_NAMESPACE})
 if [ -z "${KUBE_NAMESPACE_EXISTS}" ]; then
     echo "The namespace ${DEPLOY_NAMESPACE} does not exists. Creating..."
     kubectl create namespace "${DEPLOY_NAMESPACE}"
@@ -37,13 +37,13 @@ fi
 # Checking to see if a repo URL is in the path, if so add it or update.
 if [ -n "${HELM_REPOSITORY}" ]; then
     HELM_CHART_NAME=${DEPLOY_CHART_PATH%/*}
-    CHART_REPO_EXISTS=$(helm repo list | _grep ^${HELM_CHART_NAME})
 
+    CHART_REPO_EXISTS=$(helm repo list | _grep ^${HELM_CHART_NAME})
     if [ -z "${CHART_REPO_EXISTS}" ]; then
-        echo "Adding chart"
+        echo "Adding chart ${HELM_CHART_NAME} (${HELM_REPOSITORY})"
         helm repo add ${HELM_CHART_NAME} ${HELM_REPOSITORY}
     else
-        echo "Updating chart"
+        echo "Updating chart ${HELM_CHART_NAME}"
         helm repo update ${HELM_CHART_NAME}
     fi
 fi
