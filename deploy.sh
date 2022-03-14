@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+set -euxo pipefail
+
+# "catch exit status 1" grep wrapper
+_grep() { grep "$@" || test $? = 1; }
 
 echo "Logging into kubernetes cluster $CLUSTER_NAME"
 if [ -n "$CLUSTER_ROLE_ARN" ]; then
@@ -14,11 +18,12 @@ fi
 
 
 # Check if namespace exists and create it if it doesn't.
-if [ -n "$(kubectl get namespaces | grep $DEPLOY_NAMESPACE)" ]; then
-    echo "The namespace $DEPLOY_NAMESPACE exists. Skipping creation..."
+KUBE_NAMESPACE_EXISTS=$(kubectl get namespaces | _grep ${DEPLOY_NAMESPACE})
+if [ -z "${KUBE_NAMESPACE_EXISTS}" ]; then
+    echo "The namespace ${DEPLOY_NAMESPACE} does not exists. Creating..."
+    kubectl create namespace "${DEPLOY_NAMESPACE}"
 else
-    echo "The namespace $DEPLOY_NAMESPACE does not exists. Creating..."
-    kubectl create namespace $DEPLOY_NAMESPACE
+    echo "The namespace ${DEPLOY_NAMESPACE} exists. Skipping creation..."
 fi
 
 # Install any required helm plugins
@@ -31,11 +36,8 @@ fi
 
 # Checking to see if a repo URL is in the path, if so add it or update.
 if [ -n "${HELM_REPOSITORY}" ]; then
-    helm repo add "${HELM_REPOSITORY_NAME}" "${HELM_REPOSITORY}"
-    helm repo update
-
     HELM_CHART_NAME=${DEPLOY_CHART_PATH%/*}
-    CHART_REPO_EXISTS=$(helm repo list | grep ^${HELM_CHART_NAME})
+    CHART_REPO_EXISTS=$(helm repo list | _grep ^${HELM_CHART_NAME})
 
     if [ -z "${CHART_REPO_EXISTS}" ]; then
         echo "Adding chart"
