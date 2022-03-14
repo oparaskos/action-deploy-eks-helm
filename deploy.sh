@@ -36,9 +36,10 @@ if [ -n "${HELM_PLUGINS}" ]; then
     for PLUGIN_URL in ${HELM_PLUGINS//,/ }
     do
         helm --debug plugin install "${PLUGIN_URL}"
+        # helm --debug s3 version
     done
     helm --debug plugin list
-    ls ~/.cache/helm/plugins/
+    ls -lah ~/.cache/helm/plugins/*
 fi
 
 # Checking to see if a repo URL is in the path, if so add it or update.
