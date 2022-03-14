@@ -21,6 +21,14 @@ else
     kubectl create namespace $DEPLOY_NAMESPACE
 fi
 
+# Install any required helm plugins
+if [ -n "${HELM_PLUGINS}" ]; then
+    for PLUGIN_URL in ${HELM_PLUGINS//,/ }
+    do
+        helm plugin install "${PLUGIN_URL}"
+    done
+fi
+
 
 # Checking to see if a repo URL is in the path, if so add it or update.
 if [ -n "${HELM_REPOSITORY}" ]; then
