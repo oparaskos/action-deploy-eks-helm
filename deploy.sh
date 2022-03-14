@@ -39,7 +39,7 @@ if [ -n "${HELM_PLUGINS}" ]; then
     done
     sleep 1
     helm plugin list
-    ls /root/.cache/helm/plugins/
+    ls ~/.cache/helm/plugins/
 fi
 
 # Checking to see if a repo URL is in the path, if so add it or update.
