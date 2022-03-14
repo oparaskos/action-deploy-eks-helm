@@ -35,10 +35,9 @@ helm version
 if [ -n "${HELM_PLUGINS}" ]; then
     for PLUGIN_URL in ${HELM_PLUGINS//,/ }
     do
-        helm plugin install "${PLUGIN_URL}"
+        helm --debug plugin install "${PLUGIN_URL}"
     done
-    sleep 1
-    helm plugin list
+    helm --debug plugin list
     ls ~/.cache/helm/plugins/
 fi
 
@@ -50,7 +49,7 @@ if [ -n "${HELM_REPOSITORY}" ]; then
     CHART_REPO_EXISTS=$(echo $HELM_REPOS | _grep ^${HELM_CHART_NAME})
     if [ -z "${CHART_REPO_EXISTS}" ]; then
         echo "Adding repo ${HELM_CHART_NAME} (${HELM_REPOSITORY})"
-        helm repo add "${HELM_CHART_NAME}" "${HELM_REPOSITORY}"
+        helm repo --debug add "${HELM_CHART_NAME}" "${HELM_REPOSITORY}"
     else
         echo "Updating repo ${HELM_CHART_NAME}"
         helm repo update "${HELM_CHART_NAME}"
