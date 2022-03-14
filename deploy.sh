@@ -29,6 +29,7 @@ if [ -n "${HELM_PLUGINS}" ]; then
     done
 fi
 
+helm repo update
 
 # Checking to see if a repo URL is in the path, if so add it or update.
 if [ -n "${HELM_REPOSITORY}" ]; then
