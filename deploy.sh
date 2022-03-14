@@ -4,8 +4,6 @@ set -euxo pipefail
 # "catch exit status 1" grep wrapper
 _grep() { grep "$@" || test $? = 1; }
 
-helm version
-kubectl version
 aws --version
 
 echo "Logging into kubernetes cluster $CLUSTER_NAME"
@@ -20,6 +18,7 @@ else
         update-kubeconfig --name "${CLUSTER_NAME} "
 fi
 
+kubectl version
 
 # Check if namespace exists and create it if it doesn't.
 KUBE_NAMESPACE_EXISTS=$(kubectl get namespaces | _grep ^${DEPLOY_NAMESPACE})
@@ -29,6 +28,8 @@ if [ -z "${KUBE_NAMESPACE_EXISTS}" ]; then
 else
     echo "The namespace ${DEPLOY_NAMESPACE} exists. Skipping creation..."
 fi
+
+helm version
 
 # Install any required helm plugins
 if [ -n "${HELM_PLUGINS}" ]; then
