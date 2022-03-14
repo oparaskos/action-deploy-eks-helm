@@ -33,7 +33,7 @@ fi
 # Checking to see if a repo URL is in the path, if so add it or update.
 if [ -n "${HELM_REPOSITORY}" ]; then
     HELM_CHART_NAME=${DEPLOY_CHART_PATH%/*}
-    CHART_REPO_EXISTS = $(helm repo list | grep ^${HELM_CHART_NAME})
+    CHART_REPO_EXISTS=$(helm repo list | grep ^${HELM_CHART_NAME})
 
     if [ -z "${CHART_REPO_EXISTS}" ]; then
         echo "Adding chart"
