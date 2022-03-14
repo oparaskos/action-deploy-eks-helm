@@ -38,7 +38,8 @@ fi
 if [ -n "${HELM_REPOSITORY}" ]; then
     HELM_CHART_NAME=${DEPLOY_CHART_PATH%/*}
 
-    CHART_REPO_EXISTS=$(helm repo list | _grep ^${HELM_CHART_NAME})
+    HELM_REPOS=$(helm repo list || true)
+    CHART_REPO_EXISTS=$(echo $HELM_REPOS | _grep ^${HELM_CHART_NAME})
     if [ -z "${CHART_REPO_EXISTS}" ]; then
         echo "Adding chart ${HELM_CHART_NAME} (${HELM_REPOSITORY})"
         helm repo add ${HELM_CHART_NAME} ${HELM_REPOSITORY}
