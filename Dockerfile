@@ -1,9 +1,15 @@
-# Base on latest aws cli tools
-FROM amazon/aws-cli
+FROM ubuntu
 
 # Install helm and dependencies
-RUN yum -y update && yum install -y add curl git tar openssl which \
+RUN apt -y update && apt install -y curl git tar openssl unzip \
+    # Get the latest aws cli tools
+    && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install \
+    && rm awscliv2.zip \
+    # Install helm
     && curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash \
+    # Install kubectl
     && curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl \
     && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
     
