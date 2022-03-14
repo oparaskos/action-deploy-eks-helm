@@ -4,16 +4,20 @@ set -euxo pipefail
 # "catch exit status 1" grep wrapper
 _grep() { grep "$@" || test $? = 1; }
 
+helm version
+kubectl version
+aws --version
+
 echo "Logging into kubernetes cluster $CLUSTER_NAME"
 if [ -n "$CLUSTER_ROLE_ARN" ]; then
     aws eks \
-        --region ${AWS_REGION} \
-        update-kubeconfig --name ${CLUSTER_NAME} \
-        --role-arn=${CLUSTER_ROLE_ARN}
+        --region "${AWS_REGION}" \
+        update-kubeconfig --name "${CLUSTER_NAME}" \
+        --role-arn="${CLUSTER_ROLE_ARN}"
 else
     aws eks \
-        --region ${AWS_REGION} \
-        update-kubeconfig --name ${CLUSTER_NAME} 
+        --region "${AWS_REGION}" \
+        update-kubeconfig --name "${CLUSTER_NAME} "
 fi
 
 
@@ -32,20 +36,21 @@ if [ -n "${HELM_PLUGINS}" ]; then
     do
         helm plugin install "${PLUGIN_URL}"
     done
+    helm plugin list
 fi
 
 # Checking to see if a repo URL is in the path, if so add it or update.
 if [ -n "${HELM_REPOSITORY}" ]; then
-    HELM_CHART_NAME=${DEPLOY_CHART_PATH%/*}
+    HELM_CHART_NAME="${DEPLOY_CHART_PATH%/*}"
 
     HELM_REPOS=$(helm repo list || true)
     CHART_REPO_EXISTS=$(echo $HELM_REPOS | _grep ^${HELM_CHART_NAME})
     if [ -z "${CHART_REPO_EXISTS}" ]; then
-        echo "Adding chart ${HELM_CHART_NAME} (${HELM_REPOSITORY})"
-        helm repo add ${HELM_CHART_NAME} ${HELM_REPOSITORY}
+        echo "Adding repo ${HELM_CHART_NAME} (${HELM_REPOSITORY})"
+        helm repo add "${HELM_CHART_NAME}" "${HELM_REPOSITORY}"
     else
-        echo "Updating chart ${HELM_CHART_NAME}"
-        helm repo update ${HELM_CHART_NAME}
+        echo "Updating repo ${HELM_CHART_NAME}"
+        helm repo update "${HELM_CHART_NAME}"
     fi
 fi
 
