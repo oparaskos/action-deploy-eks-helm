@@ -4,8 +4,6 @@ set -euxo pipefail
 # "catch exit status 1" grep wrapper
 _grep() { grep "$@" || test $? = 1; }
 
-aws --version
-
 echo "Logging into kubernetes cluster $CLUSTER_NAME"
 if [ -n "$CLUSTER_ROLE_ARN" ]; then
     aws eks \
@@ -18,8 +16,6 @@ else
         update-kubeconfig --name "${CLUSTER_NAME}"
 fi
 
-kubectl version
-
 # Check if namespace exists and create it if it doesn't.
 KUBE_NAMESPACE_EXISTS=$(kubectl get namespaces | _grep ^${DEPLOY_NAMESPACE})
 if [ -z "${KUBE_NAMESPACE_EXISTS}" ]; then
@@ -27,19 +23,6 @@ if [ -z "${KUBE_NAMESPACE_EXISTS}" ]; then
     kubectl create namespace "${DEPLOY_NAMESPACE}"
 else
     echo "The namespace ${DEPLOY_NAMESPACE} exists. Skipping creation..."
-fi
-
-helm version
-
-# Install any required helm plugins
-if [ -n "${HELM_PLUGINS}" ]; then
-    for PLUGIN_URL in ${HELM_PLUGINS//,/ }
-    do
-        helm --debug plugin install "${PLUGIN_URL}"
-        # helm --debug s3 version
-    done
-    helm --debug plugin list
-    ls -lah ~/.cache/helm/plugins/*
 fi
 
 # Checking to see if a repo URL is in the path, if so add it or update.
@@ -58,7 +41,7 @@ if [ -n "${HELM_REPOSITORY}" ]; then
 fi
 
 # Upgrade or install the chart.  This does it all.
-HELM_COMMAND="helm upgrade --install --timeout ${TIMEOUT}"
+HELM_COMMAND="helm upgrade --install --timeout ${TIMEOUT} --wait"
 
 # Set paramaters
 for config_file in ${DEPLOY_CONFIG_FILES//,/ }

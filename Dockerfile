@@ -18,4 +18,6 @@ COPY deploy.sh /usr/local/bin/deploy
 RUN chmod +x /usr/local/bin/deploy ;\
     chown 555 /usr/local/bin/deploy
 
+RUN helm plugin install https://github.com/hypnoglow/helm-s3.git
+
 ENTRYPOINT [ "/usr/local/bin/deploy" ]
