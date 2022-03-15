@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
+helm plugin list
+
 # "catch exit status 1" grep wrapper
 _grep() { grep "$@" || test $? = 1; }
 
