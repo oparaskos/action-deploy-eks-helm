@@ -1,6 +1,8 @@
 FROM alpine
 
-USER root
+ENV HOME=/github/home
+RUN mkdir -p /github/home
+RUN usermod -d /github/home root
 
 RUN echo -e "http://uk.alpinelinux.org/alpine/v3.5/main\nhttp://uk.alpinelinux.org/alpine/v3.5/community" > /etc/apk/repositories
 
@@ -32,8 +34,7 @@ RUN curl -L ${BASE_URL}/${TAR_FILE} |tar xvz && \
     rm -rf linux-amd64
 
 ADD https://storage.googleapis.com/kubernetes-release/release/v1.16.15/bin/linux/amd64/kubectl /usr/bin/kubectl
-RUN chmod +x /usr/bin/kubectl && \
-    adduser kubectl -Du 2342 -h /config
+RUN chmod +x /usr/bin/kubectl
 
 COPY deploy.sh /usr/local/bin/deploy
 
