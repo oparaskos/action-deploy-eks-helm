@@ -1,5 +1,7 @@
 FROM alpine
 
+USER root
+
 RUN echo -e "http://uk.alpinelinux.org/alpine/v3.5/main\nhttp://uk.alpinelinux.org/alpine/v3.5/community" > /etc/apk/repositories
 
 ENV VERSION="3.5.0"

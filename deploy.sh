@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
+su root
+
 helm plugin list
 
 # "catch exit status 1" grep wrapper
