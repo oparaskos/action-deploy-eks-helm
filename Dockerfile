@@ -2,6 +2,7 @@ FROM alpine
 
 ENV HOME=/github/home
 RUN mkdir -p /github/home
+RUN apk --no-cache add shadow
 RUN usermod -d /github/home root
 
 RUN echo -e "http://uk.alpinelinux.org/alpine/v3.5/main\nhttp://uk.alpinelinux.org/alpine/v3.5/community" > /etc/apk/repositories
